@@ -1,1 +1,0 @@
-INDEX VERSION 1.130+/media/abose/741EEDCC1CBD91DE/CVPR_conf/.metadata/.plugins/org.eclipse.jdt.core
