@@ -10,6 +10,7 @@ import java.util.Queue;
 
 public class AppCluster {
     static int[] colorData;
+    static int[] markPoint;
     static int cc=0;
     static double[] radius;
     static int copy =0;
@@ -32,11 +33,10 @@ public class AppCluster {
         double faltu = Math.round(d*Math.pow(10,decimalPlace))/(Math.pow(10,decimalPlace));
         return faltu;
     }
-    // Test
     // Main Method
     public static void main(String[] args) {
         try{
-            BufferedReader buf = new BufferedReader(new FileReader("/home/abose/TestCluster/CVPR_Cluster/aggregation.txt"));
+            BufferedReader buf = new BufferedReader(new FileReader("/media/abose/741EEDCC1CBD91DE/CVPR_conf/aggregation.txt"));
             ArrayList<int[]> linkedComponent = new ArrayList<int[]>();
             String lineJustFetched = null;
             double ratioRange;
@@ -66,7 +66,7 @@ public class AppCluster {
             //Size declaration of colorData and radius 1D array
             colorData = new int[wordsArray.size()];
             radius = new double[wordsArray.size()];
-            
+            markPoint= new int[wordsArray.size()];
             //This for loop for Initializing the Array
             for(int i=0; i<wordsArray.size(); i++)
             {
@@ -116,16 +116,28 @@ public class AppCluster {
                             if(dst_ij == rad_ij && dst_ij!=0 && rad_ij!= 0)
                             {
                                 copy++;
-                                System.out.println("dst_ij->"+ dst_ij +" rad_ij->"+ rad_ij+ " r_i-> "+ radius[i]+  " r_j-> "+ radius[j]+" copy->"+copy + " i->" + i +" j->"+ j);
-                                colorData[i] = 1;
-                                colorData[j] = 1;
+                                //System.out.println("dst_ij->"+ dst_ij +" rad_ij->"+ rad_ij+ " r_i-> "+ radius[i]+  " r_j-> "+ radius[j]+" copy->"+copy + " i->" + i +" j->"+ j);
+                                if(colorData[j]==0) {
+                                	colorData[i] = 1;
+                                    colorData[j] = 1;
+                                    linkedComponent.add( new int[]{i,j});
+                                }
+                                else
+                                {
+                                	if(markPoint[j]==0) {
+                                	colorData[i]=1;
+                                	linkedComponent.add( new int[]{i,j});
+                                	}
+                                	else
+                                		continue;
+                                		//linkedComponent.add(new int[]{i,-1});
+                                }
                                 if(flag==0){
                                     m= radius[i];
                                     System.out.println("value of m <-" + m);
                                     flag = 1;
                                     System.out.println("aschi");
                                 }
-                                linkedComponent.add( new int[]{i,j});
                             }
                         }
                     }
@@ -133,7 +145,7 @@ public class AppCluster {
             }//While Loop ends here
             ConnectedComponents concomp = new ConnectedComponents(linkedComponent);
             clusterArray.addAll(concomp.funcCall());
-            FileWriter writer = new FileWriter("/home/abose/TestCluster/output.txt");
+            FileWriter writer = new FileWriter("/media/abose/741EEDCC1CBD91DE/CVPR_conf/output.txt");
  
             for (int [] arr : clusterArray){
                 System.out.print(""+arr[0] + "  "+arr[1]);
@@ -142,8 +154,9 @@ public class AppCluster {
                 writer.write(System.lineSeparator());
             }
             writer.close();
-            for(int k=0; k<clusterArray.size() ;k++)
-            System.out.println("clustArrsize "+ clusterArray.size()+ " hehe-> " + clusterArray.get(k)[0]+ " " + clusterArray.get(k)[1]);
+            System.out.println("clustArrsize "+ clusterArray.size());
+            //for(int k=0; k<clusterArray.size() ;k++)
+            //System.out.println("clustArrsize "+ clusterArray.size()+ " hehe-> " + clusterArray.get(k)[0]+ " " + clusterArray.get(k)[1]);
             
             buf.close();
         }catch(Exception e){
@@ -169,7 +182,7 @@ class CCGraph
         edges = new Integer[MAXInit + 1][MAXInit];
         degree = new int[MAXInit + 1];
         for(int z=0;z<clustRepRef.size(); z++)
-            System.out.println(clustRepRef.get(z)[0]+ " "+ clustRepRef.get(z)[1]+ "  MAXInit-> " + MAXInit);
+            //System.out.println(clustRepRef.get(z)[0]+ " "+ clustRepRef.get(z)[1]+ "  MAXInit-> " + MAXInit);
         for (int i = 1; i <= MAXInit; i++)
             degree[i] = 0;
     }
@@ -255,7 +268,8 @@ class ConnectedComponents
         {
             v = q.remove();
             component.add(v);
-            System.out.println(v);
+            AppCluster.markPoint[v]=1;
+            //System.out.println(v);
             //process_vertex(v);
             processed[v] = true;
 
@@ -273,20 +287,20 @@ class ConnectedComponents
         return component;
     }
 
-    static ArrayList<int[]> connected_components(CCGraph g)
+    static ArrayList<int[]> connected_components(CCGraph gCln)
     {
         clusterSave.clear();
         //System.out.println("vertices -> " + g.nvertices);
         System.out.println();
         for (int i = 1; i <= CCGraph.MAXInit; i++)
         {
-        	if(g.edges[i][0]!=null)
+        	if(gCln.edges[i][0]!=null)
             {
             	if (!discovered[i])
 	        	{
             		AppCluster.cc++;
-	                System.out.println("Hudai" + AppCluster.cc);
-	                receiver.addAll(bfs(g, i));
+	                //System.out.println("Hudai" + AppCluster.cc);
+	                receiver.addAll(bfs(gCln, i));
 	                for(int k= 0; k< receiver.size(); k++){
 	                	clusterSave.add(new int[] {receiver.get(k), AppCluster.cc});
 	                	System.out.println("Test clusterSave Size->" + clusterSave.size());
