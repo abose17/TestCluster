@@ -36,7 +36,7 @@ public class AppCluster {
     // Main Method
     public static void main(String[] args) {
         try{
-        	System.out.println("I am Here");
+        	
             BufferedReader buf = new BufferedReader(new FileReader("/home/abose/TestCluster/CVPR_Cluster/aggregation.txt"));
             ArrayList<int[]> linkedComponent = new ArrayList<int[]>();
             String lineJustFetched = null;
