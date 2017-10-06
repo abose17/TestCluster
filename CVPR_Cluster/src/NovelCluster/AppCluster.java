@@ -37,7 +37,7 @@ public class AppCluster {
     public static void main(String[] args) {
         try{
         	System.out.println("I am Here");
-            BufferedReader buf = new BufferedReader(new FileReader("/media/abose/741EEDCC1CBD91DE/CVPR_conf/aggregation.txt"));
+            BufferedReader buf = new BufferedReader(new FileReader("/home/abose/TestCluster/CVPR_Cluster/aggregation.txt"));
             ArrayList<int[]> linkedComponent = new ArrayList<int[]>();
             String lineJustFetched = null;
             double ratioRange;
@@ -146,7 +146,7 @@ public class AppCluster {
             }//While Loop ends here
             ConnectedComponents concomp = new ConnectedComponents(linkedComponent);
             clusterArray.addAll(concomp.funcCall());
-            FileWriter writer = new FileWriter("/media/abose/741EEDCC1CBD91DE/CVPR_conf/output.txt");
+            FileWriter writer = new FileWriter("/home/abose/TestCluster/CVPR_Cluster/output.txt");
  
             for (int [] arr : clusterArray){
                 System.out.print(""+arr[0] + "  "+arr[1]);
