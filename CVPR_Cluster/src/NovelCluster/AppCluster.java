@@ -109,7 +109,7 @@ public class AppCluster {
                             double CHAL1 = Double.parseDouble(chal1);
                             double CHAL2 = Double.parseDouble(chal2);
                             //System.out.println("BAL1->"+BAL1+ "  BAL2->"+ BAL2 + "  CHAL1->"+ CHAL1+ "  CHAL2->" + CHAL2 + "radius["+i+"]->" + radius[i]);
-                            double temp1 = Math.sqrt(Math.pow((BAL1-CHAL1),2)) + Math.sqrt(Math.pow((BAL2-CHAL2),2));
+                            double temp1 = Math.sqrt(Math.pow((BAL1-CHAL1),2) + Math.pow((BAL2-CHAL2),2));
                             //System.out.println("temp1-> "+ temp1);
                             dst_ij    = round(temp1,2);
                             double temp2 = (radius[i]+ radius[j]);
@@ -125,20 +125,21 @@ public class AppCluster {
                                 }
                                 else
                                 {
-                                	if(markPoint[j]==0) {
+                                	//if(markPoint[j]==0) {
                                 	colorData[i]=1;
+                                	System.out.println("test i "+ i +" test j "+ j+" Color Data["+j+"] " + colorData[j]);
                                 	linkedComponent.add( new int[]{i,j});
-                                	}
+                                	/*}
                                 	else
                                 		continue;
-                                		//linkedComponent.add(new int[]{i,-1});
+                                		linkedComponent.add(new int[]{i,-1});*/
                                 }
-                                if(flag==0){
+                                /*if(flag==0){
                                     m= radius[i];
-                                    System.out.println("value of m <-" + m);
+                                    System.out.println("value of m <-" + m+ " "+i + " "+ j);
                                     flag = 1;
                                     System.out.println("aschi");
-                                }
+                                }*/
                             }
                         }
                     }
@@ -270,7 +271,7 @@ class ConnectedComponents
             v = q.remove();
             component.add(v);
             AppCluster.markPoint[v]=1;
-            //System.out.println(v);
+            //System.out.println(" v "+v);
             //process_vertex(v);
             processed[v] = true;
 
@@ -301,6 +302,7 @@ class ConnectedComponents
 	        	{
             		AppCluster.cc++;
 	                //System.out.println("Hudai" + AppCluster.cc);
+            		//System.out.println(" i " + i);
 	                receiver.addAll(bfs(gCln, i));
 	                for(int k= 0; k< receiver.size(); k++){
 	                	clusterSave.add(new int[] {receiver.get(k), AppCluster.cc});
