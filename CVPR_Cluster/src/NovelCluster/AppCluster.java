@@ -10,7 +10,7 @@ import java.util.Queue;
 
 public class AppCluster {
     static int[] colorData;
-    static int[] markPoint;
+    static ArrayList<Integer> markPoint = new ArrayList<Integer>();
     static int cc=0;
     static double[] radius;
     static int copy =0;
@@ -37,7 +37,7 @@ public class AppCluster {
     public static void main(String[] args) {
         try{
         	
-            BufferedReader buf = new BufferedReader(new FileReader("/home/abose/TestCluster/CVPR_Cluster/aggregation.txt"));
+            BufferedReader buf = new BufferedReader(new FileReader("/home/abose/TestCluster/CVPR_Cluster/ag.txt"));
             ArrayList<int[]> linkedComponent = new ArrayList<int[]>();
             String lineJustFetched = null;
             double ratioRange;
@@ -67,7 +67,6 @@ public class AppCluster {
             //Size declaration of colorData and radius 1D array
             colorData = new int[wordsArray.size()];
             radius = new double[wordsArray.size()];
-            markPoint= new int[wordsArray.size()];
             //This for loop for Initializing the Array
             for(int i=0; i<wordsArray.size(); i++)
             {
@@ -121,25 +120,31 @@ public class AppCluster {
                                 if(colorData[j]==0) {
                                 	colorData[i] = 1;
                                     colorData[j] = 1;
+                                    System.out.println("test i -> "+ i +" test j -> "+ j+" Color Data["+j+"] " + colorData[j]);
                                     linkedComponent.add( new int[]{i,j});
                                 }
                                 else
                                 {
                                 	//if(markPoint[j]==0) {
                                 	colorData[i]=1;
-                                	System.out.println("test i "+ i +" test j "+ j+" Color Data["+j+"] " + colorData[j]);
-                                	linkedComponent.add( new int[]{i,j});
+                                	if(!markPoint.contains(j))
+                                	{
+                                		System.out.println("test i "+ i +" test j "+ j+" Color Data["+j+"] " + colorData[j]);
+                                		linkedComponent.add( new int[]{i,j});
+                                	}
+                                	else
+                                		continue;
                                 	/*}
                                 	else
                                 		continue;
                                 		linkedComponent.add(new int[]{i,-1});*/
                                 }
-                                /*if(flag==0){
+                                if(flag==0){
                                     m= radius[i];
                                     System.out.println("value of m <-" + m+ " "+i + " "+ j);
                                     flag = 1;
                                     System.out.println("aschi");
-                                }*/
+                                }
                             }
                         }
                     }
@@ -165,6 +170,7 @@ public class AppCluster {
             e.printStackTrace();
         } 
     }
+    
 }    
 // Sample program to find connected components of undirected graph
 
@@ -270,8 +276,8 @@ class ConnectedComponents
         {
             v = q.remove();
             component.add(v);
-            AppCluster.markPoint[v]=1;
-            //System.out.println(" v "+v);
+            AppCluster.markPoint.add(v);
+            System.out.println(" v "+v);
             //process_vertex(v);
             processed[v] = true;
 
