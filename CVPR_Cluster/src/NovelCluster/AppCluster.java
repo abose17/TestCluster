@@ -33,12 +33,36 @@ public class AppCluster {
         double faltu = Math.round(d*Math.pow(10,decimalPlace))/(Math.pow(10,decimalPlace));
         return faltu;
     }
+    
+    static ArrayList<int[]> calcCluster(ArrayList<Integer> visitPoint, double radM)
+    {
+    	ArrayList<int[]> radiuslinked = new ArrayList<int[]>();
+    	for(int i=0; i< visitPoint.size();i++) {
+    		for(int j=0; j< visitPoint.size() ;j++) {
+    			if(i!=j)
+    			{
+	    			if(Math.sqrt(Math.pow((Double.parseDouble(wordsArray.get(visitPoint.get(i))[0])-Double.parseDouble(wordsArray.get(visitPoint.get(j))[0])), 2)+ Math.pow((Double.parseDouble(wordsArray.get(visitPoint.get(i))[1])-Double.parseDouble(wordsArray.get(visitPoint.get(j))[1])), 2))<=(2*radM))
+	    			{
+	    				//System.out.println(Double.parseDouble(wordsArray.get(visitPoint.get(i))[0])+" " + Double.parseDouble(wordsArray.get(visitPoint.get(i))[1])+ " " + Double.parseDouble(wordsArray.get(visitPoint.get(j))[0])+ " "+Double.parseDouble(wordsArray.get(visitPoint.get(j))[1])+ " 2*radM " + 2*radM + " rad "+ Math.sqrt(Math.pow((Double.parseDouble(wordsArray.get(visitPoint.get(i))[0])-Double.parseDouble(wordsArray.get(visitPoint.get(j))[0])), 2)+ Math.pow((Double.parseDouble(wordsArray.get(visitPoint.get(i))[1])-Double.parseDouble(wordsArray.get(visitPoint.get(j))[1])), 2)));
+	    				if(!(radiuslinked.contains(visitPoint.get(i))) || !radiuslinked.contains(visitPoint.get(j)))//kaj korte hobe
+	    				{
+		    				radiuslinked.add( new int[]{visitPoint.get(i),visitPoint.get(j)});
+		                	System.out.println(" i -> "+i +" j ->" + j+ " "+ visitPoint.get(i) +" "+ visitPoint.get(j));
+	    				}
+	    			}
+    			}
+    		}
+    	}
+    	ConnectedComponents concomp = new ConnectedComponents(radiuslinked);
+    	return concomp.funcCall();
+    }
+    
     // Main Method
     public static void main(String[] args) {
         try{
         	
             BufferedReader buf = new BufferedReader(new FileReader("/home/abose/TestCluster/CVPR_Cluster/ag.txt"));
-            ArrayList<int[]> linkedComponent = new ArrayList<int[]>();
+            ArrayList<Integer> linkedComponent = new ArrayList<Integer>();
             String lineJustFetched = null;
             double ratioRange;
             double deltaRadius = 0.001;
@@ -90,11 +114,13 @@ public class AppCluster {
                         //System.out.println("BAL1->"+wordsArray.get(i)[0]+ "  BAL2->"+ wordsArray.get(i)[1]+ "  radius["+i+"]->" + radius[i]);
                         if((radius[i]>= (1+ratioRange)*m) && flag==1)
                         {
-                        	System.out.println("value of m->" + m);
+                        	System.out.println("value of margina radius ->" + (1+ratioRange)*m);
+                        	System.out.println("linkedComponent ->" + linkedComponent);
+                            //ConnectedComponents concomp = new ConnectedComponents(linkedComponent);
+                            //clusterArray.addAll(concomp.funcCall());
+                            clusterArray.addAll(calcCluster(linkedComponent, (1+ratioRange)*m));
                             m=0;
                             flag = 0;
-                            ConnectedComponents concomp = new ConnectedComponents(linkedComponent);
-                            clusterArray.addAll(concomp.funcCall());
                             System.out.println("cltsz->"+ clusterArray.size());
                             linkedComponent.clear();
                         }
@@ -121,23 +147,22 @@ public class AppCluster {
                                 	colorData[i] = 1;
                                     colorData[j] = 1;
                                     System.out.println("test i -> "+ i +" test j -> "+ j+" Color Data["+j+"] " + colorData[j]);
-                                    linkedComponent.add( new int[]{i,j});
+                                    if(!linkedComponent.contains(i))
+                                    	linkedComponent.add(i);
+                                    linkedComponent.add(j);
                                 }
                                 else
                                 {
                                 	//if(markPoint[j]==0) {
                                 	colorData[i]=1;
-                                	if(!markPoint.contains(j))
+                                	if(!markPoint.contains(j)) // queue v has pop up it or not
                                 	{
                                 		System.out.println("test i "+ i +" test j "+ j+" Color Data["+j+"] " + colorData[j]);
-                                		linkedComponent.add( new int[]{i,j});
+                                		//if(!linkedComponent.contains(j))
+                                		linkedComponent.add(i);
                                 	}
                                 	else
-                                		continue;
-                                	/*}
-                                	else
-                                		continue;
-                                		linkedComponent.add(new int[]{i,-1});*/
+                                		continue;                               
                                 }
                                 if(flag==0){
                                     m= radius[i];
@@ -150,8 +175,11 @@ public class AppCluster {
                     }
                 }//For Loop ends here
             }//While Loop ends here
-            ConnectedComponents concomp = new ConnectedComponents(linkedComponent);
-            clusterArray.addAll(concomp.funcCall());
+            //ConnectedComponents concomp = new ConnectedComponents(linkedComponent);
+            //clusterArray.addAll(concomp.funcCall());
+            clusterArray.addAll(calcCluster(linkedComponent,(1+ratioRange)*m));
+            System.out.println("cltsz 2->"+ clusterArray.size());
+            System.out.println("linkedComponent ->" + linkedComponent);
             FileWriter writer = new FileWriter("/home/abose/TestCluster/CVPR_Cluster/output.txt");
  
             for (int [] arr : clusterArray){
